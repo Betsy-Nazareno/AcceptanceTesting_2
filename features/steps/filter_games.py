@@ -23,6 +23,13 @@ def step_impl(context):
 def step_impl(context, name):
 	context.name = name
 
+@given('the user enters the rate: {rate}')
+def step_impl(context, rate):
+	context.rate = rate
+
+@given('the user enters the study: {study}')
+def step_impl(context, study):
+		context.study = study
 
 @when("the user search games by {criteria}")
 def step_impl(context, criteria):
@@ -31,12 +38,22 @@ def step_impl(context, criteria):
 		print(result)
 		context.result = result
 		context.message = message
-
+		
+	elif(criteria == 'rate'):
+		result, message, error = get_game_rating(context.games, context.rate)
+		print("This is the result", result)
+		context.result = result
+		context.message = message
+	
+	elif (criteria == 'study'):
+		result, message = get_game_developer(context.games, context.study)
+		context.result = result
+		context.message = message
 
 @then("{total} games will match")
 def step_impl(context, total):
+	print("This is the len", len(context.result))
 	assert len(context.result) == int(total)
-
 
 @then("the names of these games are")
 def step_impl(context):
@@ -49,6 +66,7 @@ def step_impl(context):
 			print("No game " + game.name)
 			expected_games = False
 	assert expected_games is True
+
 
 @then("the following message is displayed: {message}")
 def step_impl(context, message):
